@@ -1,11 +1,8 @@
 package com.example.recipes
 
 import android.app.Application
+import com.example.data.di.*
 import com.example.recipes.koin.viewModelsModule
-import com.example.data.di.networkModule
-import com.example.data.di.productRepositoryModule
-import com.example.data.di.recipeDatabaseModule
-import com.example.data.di.useCaseModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -22,7 +19,8 @@ class RecipeApplication : Application() {
                 viewModelsModule,
                 useCaseModule,
                 networkModule,
-                recipeDatabaseModule
+                recipeDatabaseModule,
+                recipeMediatorModule
             )
         }
     }

@@ -1,19 +1,17 @@
 package com.example.domain.usecase
 
+import androidx.paging.PagingData
 import com.example.domain.model.Recipe
-import com.example.domain.model.Response
-import com.example.domain.repository.ProductRepository
+
+import com.example.domain.repository.RecipesRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 
 
-class GetRecipeUseCase(private val recipeRepository: ProductRepository) {
-    suspend operator fun invoke() :Response<List<Recipe>> {
-            //return  Response.Success(emptyList())
-            return recipeRepository.getProducts(1,20)
-                .fold(onSuccess = {
-                    Response.Success(it)
-                }, onFailure = {
-                    Response.Failure(Exception(it.message))
-                })
-    }
-
+class GetRecipeUseCase(private val recipeRepository: RecipesRepository) {
+     operator fun invoke() : Flow<PagingData<Recipe>> {
+            return recipeRepository.getRecipes()
+                .flowOn(Dispatchers.IO)
+        }
 }

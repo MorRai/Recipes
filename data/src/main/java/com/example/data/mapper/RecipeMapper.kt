@@ -8,6 +8,10 @@ import com.example.domain.model.Recipe
     return map { it.toDomainModels() }
 }
 
+fun List<Recipe>.toDomainModels(): List<RecipeEntity> {
+    return map { it.toDomainModels() }
+}
+
 
  fun RecipeDTO.toDomainModels(): Recipe {
     return Recipe(
@@ -22,7 +26,7 @@ import com.example.domain.model.Recipe
     return RecipeEntity(
         id = id,
         name = name,
-        image = image,
+        image = image
     )
 }
 

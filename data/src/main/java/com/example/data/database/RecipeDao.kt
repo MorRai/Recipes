@@ -1,13 +1,14 @@
 package com.example.data.database
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.example.data.model.RecipeEntity
 
 @Dao
-interface  RecipeDao {
+interface RecipeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(recipe: RecipeEntity)
+    suspend fun insert(recipes: List<RecipeEntity>)
 
     @Update
     suspend fun update(recipe: RecipeEntity)
@@ -19,6 +20,9 @@ interface  RecipeDao {
     suspend fun getRecipe(id: Int): RecipeEntity
 
     @Query("SELECT * from recipe_database order by name asc")
-    suspend fun getRecipes(): List<RecipeEntity>
+    fun getRecipes(): PagingSource<Int, RecipeEntity>
+
+    @Query("Delete From recipe_database")
+    suspend fun clearAllRecipes()
 
 }

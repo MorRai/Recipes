@@ -5,7 +5,7 @@ targetSdk = "33"
 
 
 androidx-lifecycle = "2.4.1"
-androidx-room =  "2.4.2"
+androidx-room =  "2.5.2"
 koin-version = "3.3.2"
 kotlinx-coroutine = "1.5.2"
 androidx-core = "1.7.0"

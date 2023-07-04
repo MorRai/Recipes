@@ -49,6 +49,12 @@ android {
 
 dependencies {
 
+
+    //Paging 3
+    implementation ("androidx.paging:paging-runtime:3.1.1")
+    implementation ("androidx.paging:paging-compose:3.2.0-rc01")
+
+
     implementation(project(":domain"))
     implementation(project(":data"))
 
