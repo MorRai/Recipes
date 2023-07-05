@@ -8,7 +8,7 @@ import com.example.domain.model.Recipe
     return map { it.toDomainModels() }
 }
 
-fun List<Recipe>.toDomainModels(): List<RecipeEntity> {
+fun List<Recipe>.toEntityModels(): List<RecipeEntity> {
     return map { it.toDomainModels() }
 }
 

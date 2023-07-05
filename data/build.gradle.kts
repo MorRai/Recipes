@@ -36,6 +36,8 @@ dependencies {
     implementation(project(":domain"))
 
     implementation ("androidx.paging:paging-common:3.1.1")
+    //implementation ("androidx.paging:paging-runtime:3.1.1")
+    implementation ("androidx.room:room-paging:2.5.2")
 
     kapt(libs.androidx.room.compiler)
     implementation(libs.bundles.androidx.room)

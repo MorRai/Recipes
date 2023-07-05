@@ -52,7 +52,7 @@ dependencies {
 
     //Paging 3
     implementation ("androidx.paging:paging-runtime:3.1.1")
-    implementation ("androidx.paging:paging-compose:3.2.0-rc01")
+    implementation ("androidx.paging:paging-compose:1.0.0-alpha17")
 
 
     implementation(project(":domain"))

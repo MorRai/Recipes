@@ -8,9 +8,9 @@ import androidx.room.withTransaction
 import com.example.data.api.RecipeApi
 import com.example.data.database.RecipeDatabase
 import com.example.data.mapper.toDomainModels
+import com.example.data.mapper.toEntityModels
 import com.example.data.model.RecipeEntity
 import com.example.data.model.RemoteKeys
-import com.example.domain.model.Recipe
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -107,7 +107,7 @@ class RecipesRemoteMediator(private val productService: RecipeApi, private val r
                 }
 
                 recipeDatabase.remoteKeysDao().insertAll(remoteKeys)
-                recipeDatabase.recipeDao().insert(recipes.toDomainModels())
+                recipeDatabase.recipeDao().insert(recipes.toEntityModels())
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (error: IOException) {

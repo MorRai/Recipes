@@ -1,15 +1,17 @@
 package com.example.data.database
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.data.model.RemoteKeys
 
+@Dao
 interface RemoteKeysDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(remoteKey: List<RemoteKeys>)
 
-    @Query("Select * From remote_key Where movie_id = :id")
+    @Query("Select * From remote_key Where recipe_id = :id")
     suspend fun getRemoteKeyByRecipeID(id: Int): RemoteKeys?
 
     @Query("Delete From remote_key")

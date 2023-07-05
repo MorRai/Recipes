@@ -7,11 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -19,11 +15,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.model.Recipe
 import com.example.recipes.ui.theme.RecipesTheme
-import com.example.domain.model.Response
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 
 class MainActivity : ComponentActivity() {
@@ -45,23 +45,10 @@ class MainActivity : ComponentActivity() {
 fun ListRecipesScreen() {
 
     val viewModel = koinViewModel<RecipeListViewModel>()
-    val recipeFlowState = viewModel.recipeFlow.collectAsState().value
+    val recipeFlowState = viewModel.recipePagingDataFlow.collectAsLazyPagingItems()
+    RecipesGrid(recipes = recipeFlowState)
 
-    when (recipeFlowState) {
-        is Response.Loading -> {
-            // Отображение состояния загрузки
-        }
-        is Response.Success -> {
-            val recipes = recipeFlowState.data
-            RecipesGrid(recipes)
-        }
-        is Response.Failure -> {
-            val errorMessage = recipeFlowState.e
-            // Отображение ошибки
-        }
-    }
 }
-
 
 
 @Composable
@@ -74,7 +61,10 @@ fun RecipeCard(
         shape = MaterialTheme.shapes.small,
         modifier = modifier
     ) {
-        Column(modifier = Modifier.width(150.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.width(150.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             AsyncImage(
                 model = drawable,
                 contentDescription = null,
@@ -93,7 +83,7 @@ fun RecipeCard(
 
 @Composable
 fun RecipesGrid(
-    recipes: List<Recipe>,
+    recipes: LazyPagingItems<Recipe>,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -103,11 +93,94 @@ fun RecipesGrid(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.background(Color.LightGray)
     ) {
-        items(recipes) { item ->
-            RecipeCard(item.image, item.name, modifier = Modifier.height(270.dp))
+
+        items(recipes.itemCount) { index ->
+            recipes[index]?.let {
+                RecipeCard(it.image, it.name, modifier = Modifier.height(270.dp))
+            }
+        }
+
+        val loadState = recipes.loadState.mediator
+        item {
+            if (loadState?.refresh == LoadState.Loading) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(8.dp),
+                        text = "Refresh Loading"
+                    )
+
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+            }
+
+            if (loadState?.append == LoadState.Loading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+            }
+
+            if (loadState?.refresh is LoadState.Error || loadState?.append is LoadState.Error) {
+                val isPaginatingError =
+                    (loadState.append is LoadState.Error) || recipes.itemCount > 1
+                val error = if (loadState.append is LoadState.Error)
+                    (loadState.append as LoadState.Error).error
+                else
+                    (loadState.refresh as LoadState.Error).error
+
+                val modifier = if (isPaginatingError) {
+                    Modifier.padding(8.dp)
+                } else {
+                    Modifier.fillMaxSize()
+                }
+                Column(
+                    modifier = modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    if (!isPaginatingError) {
+                        Icon(
+                            modifier = Modifier
+                                .size(64.dp),
+                            imageVector = Icons.Rounded.Warning, contentDescription = null
+                        )
+                    }
+
+                    Text(
+                        modifier = Modifier
+                            .padding(8.dp),
+                        text = error.message ?: error.toString(),
+                        textAlign = TextAlign.Center,
+                    )
+
+                    Button(
+                        onClick = {
+                            recipes.refresh()
+                        },
+                        content = {
+                            Text(text = "Refresh")
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            //background = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.White,
+                        )
+                    )
+                }
+            }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
