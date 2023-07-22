@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 
 
-class GetRecipeUseCase(private val recipeRepository: RecipesRepository) {
+class GetRecipesUseCase(private val recipeRepository: RecipesRepository) {
      operator fun invoke() : Flow<PagingData<Recipe>> {
             return recipeRepository.getRecipes()
                 .flowOn(Dispatchers.IO)

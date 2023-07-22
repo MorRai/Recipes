@@ -55,6 +55,10 @@ dependencies {
     implementation ("androidx.paging:paging-compose:1.0.0-alpha17")
 
 
+    implementation ("androidx.navigation:navigation-compose:2.5.3")
+    androidTestImplementation ("androidx.navigation:navigation-testing:2.6.0")
+
+
     implementation(project(":domain"))
     implementation(project(":data"))
 
